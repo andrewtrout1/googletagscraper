@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 from bs4 import Comment
 from urllib.request import Request, urlopen
 import re
-import csv  
+import csv
 
 
 # Place URLs to scrape here
@@ -40,27 +40,33 @@ for url in urls:
         
         soup = BeautifulSoup(webpage, 'html.parser')
         source = str(soup)
-        comments = str(soup.find_all(string=lambda text: isinstance(text, Comment)))
+        # comments = str(soup.find_all(string=lambda text: isinstance(text, Comment)))
         
         print(url)
 
         foundtags = []
         for item in search_str:
             srcsearch = searchStr(item[0], item[1], source)
-            comsearch = searchStr(item[0], item[1], comments)
+            # comsearch = searchStr(item[0], item[1], comments)
             if srcsearch != None:
                 print(str(srcsearch))
                 foundtags.append(srcsearch)
-            if comsearch != None:
-                print(str(comsearch))
-                foundtags.append(comsearch)
+            else:
+                print(url + ' - No ' + item[0] + ' tags found in source!')
+                foundtags.append('No ' + item[0] + ' tags found in source!')
+            # if comsearch != None:
+            #     print(str(comsearch))
+            #     foundtags.append(comsearch)
+            # else:
+            #     print(url + ' - No ' + item[0] + ' tags found in comments!')
+            #     foundtags.append('No ' + item[0] + ' tags found in comments!')
         for tag in foundtags:
             data.append([url, tag])
         
 
     except:
-        print(url + " - Error!!")
-        data.append([url, 'Error!!'])
+        print(url + " - Error!")
+        data.append([url, 'Error!'])
 
 # Add name of CSV file here
 with open('googletags.csv', 'w', encoding='UTF8') as f:
