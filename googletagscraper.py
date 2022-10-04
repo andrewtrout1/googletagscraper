@@ -3,12 +3,15 @@ from bs4 import Comment
 from urllib.request import Request, urlopen
 import re
 import csv
+from datetime import datetime
+
+
 
 
 # Place URLs to scrape here
 urls = [
-'http://www.google.com',
-'https://www.apple.com/',
+'https://www.google.com',
+'https://www.apple.com/'
 
 ]
 
@@ -40,36 +43,39 @@ for url in urls:
         
         soup = BeautifulSoup(webpage, 'html.parser')
         source = str(soup)
-        # comments = str(soup.find_all(string=lambda text: isinstance(text, Comment)))
+        comments = str(soup.find_all(string=lambda text: isinstance(text, Comment)))
         
         print(url)
 
         foundtags = []
         for item in search_str:
             srcsearch = searchStr(item[0], item[1], source)
-            # comsearch = searchStr(item[0], item[1], comments)
+            comsearch = searchStr(item[0], item[1], comments)
             if srcsearch != None:
                 print(str(srcsearch))
-                foundtags.append(srcsearch)
+                foundtags.append(str(srcsearch) + ' Found in source')
             else:
                 print(url + ' - No ' + item[0] + ' tags found in source!')
                 foundtags.append('No ' + item[0] + ' tags found in source!')
-            # if comsearch != None:
-            #     print(str(comsearch))
-            #     foundtags.append(comsearch)
-            # else:
-            #     print(url + ' - No ' + item[0] + ' tags found in comments!')
-            #     foundtags.append('No ' + item[0] + ' tags found in comments!')
+            if comsearch != None:
+                print(str(comsearch))
+                foundtags.append(str(comsearch) + ' - Found in comments')
+            else:
+                print(url + ' - No ' + item[0] + ' tags found in comments!')
+                foundtags.append('No ' + item[0] + ' tags found in comments!')
         for tag in foundtags:
             data.append([url, tag])
         
 
     except:
-        print(url + " - Error!")
-        data.append([url, 'Error!'])
+        print(url + " - Error!!")
+        data.append([url, 'Error!!'])
 
-# Add name of CSV file here
-with open('googletags.csv', 'w', encoding='UTF8') as f:
+now = datetime.now()
+dt_string = now.strftime("%d-%m-%Y_%H-%M")
+print(dt_string)	
+
+with open('googletags-' + dt_string + '.csv', 'w', encoding='UTF8') as f:
     writer = csv.writer(f)
     header = ['Site URL', 'Google Tags']
     writer.writerow(header)
